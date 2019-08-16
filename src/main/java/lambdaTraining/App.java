@@ -64,41 +64,41 @@ public class App {
                 .collect(Collectors.toList());
         result.forEach(s -> System.out.println(s));
 
-         long number = SampleData.membersOfTheBeatles.stream()
+        long number = SampleData.membersOfTheBeatles.stream()
                 .filter(artist -> artist.getNationality()
                         .equals("UK"))
                 .count();
         System.out.println(number);
 
-        List<String> stringList = Stream.of("a","b","c")
+        List<String> stringList = Stream.of("a", "b", "c")
                 .map(x -> x.toUpperCase())
                 .collect(Collectors.toList());
 
-        List<String> dataWithNumbers = Arrays.asList("a","122as","a23","b32ss","3a");
-        for(String data : dataWithNumbers){
-            if(Character.isDigit(data.charAt(0))){
+        List<String> dataWithNumbers = Arrays.asList("a", "122as", "a23", "b32ss", "3a");
+        for (String data : dataWithNumbers) {
+            if (Character.isDigit(data.charAt(0))) {
                 System.out.println(data);
             }
         }
 
         List<String> newData = dataWithNumbers.stream()
-                .filter(x ->Character.isDigit(x.charAt(0)))
+                .filter(x -> Character.isDigit(x.charAt(0)))
                 .collect(Collectors.toList());
 
-        for(String data: newData){
+        for (String data : newData) {
             System.out.println(data);
         }
 
         System.out.println();
 
-        List<Integer> flat = Stream.of(Arrays.asList(2,3,4),Arrays.asList(33,22,11))
+        List<Integer> flat = Stream.of(Arrays.asList(2, 3, 4), Arrays.asList(33, 22, 11))
                 .flatMap(numbers -> numbers.stream())
                 .collect(Collectors.toList());
         flat.forEach(System.out::println);
 
-        List<Track> tracks = Arrays.asList(new Track("Bakai",524),
-                new Track("Violets for Your Furs",378),
-                new Track("Time Was",451));
+        List<Track> tracks = Arrays.asList(new Track("Bakai", 524),
+                new Track("Violets for Your Furs", 378),
+                new Track("Time Was", 451));
 
         Track minTrack = tracks.stream().min(Comparator.comparing(track -> track.getLength())).get();
 
@@ -107,5 +107,56 @@ public class App {
         System.out.println(minTrack.getLength());
         tracks.forEach(System.out::println);
 
+        int count = Stream.of(1, 2, 3, 4, 5).reduce(0, (acc, element) -> acc + element);
+        System.out.println(count); //adding elements on the list!
+
+        SampleData.membersOfTheBeatles.stream()
+                .forEach(member -> System.out.println(member.getName() + " " + member.getNationality()));
+
+        List<String> beatlesNames = SampleData.membersOfTheBeatles.stream()
+                .map(artist -> artist.getName()) //map collection to list of strings returned by getName
+                .collect(Collectors.toList());
+        beatlesNames.forEach(artist -> System.out.println(artist));
+
+        List<Integer> integers = Arrays.asList(1, 2, 5, 7, 4, 8, 1, 7);
+
+        List<String> integerStrings = integers.stream()
+                .map(integer -> String.valueOf(integer))
+                .collect(Collectors.toList());
+        integerStrings.forEach(string -> System.out.print(string + " "));
+
+
+        System.out.println();
+        System.out.println();
+        List<Album> albums = new ArrayList<>();
+        albums.add(SampleData.aLoveSupreme);
+        albums.add(SampleData.manyTrackAlbum);
+        albums.add(SampleData.sampleShortAlbum);
+
+        Set<String> trackNames = findLongTracks(albums);
+        trackNames.forEach(System.out::println);
+
+        Set<String> trackNamesForStream = findLongTracksStream(albums);
+        trackNamesForStream.forEach(System.out::println);
+    }
+    public static Set<String> findLongTracks (List<Album> albums) {
+        Set<String> trackNames = new HashSet<>();
+        for (Album album : albums) {
+            for (Track track : album.getTracks()) {
+                if (track.getLength() > 60) {
+                    String name = track.getName();
+                    trackNames.add(name);
+                }
+            }
+        }
+        return trackNames;
+    }
+    public static Set<String> findLongTracksStream(List<Album> albums){
+        Set<String> trackNames = new HashSet<>();
+        albums.forEach(album -> album.getTracks().stream()
+                .filter(track -> track.getLength()>60)
+                .forEach(track -> trackNames.add(track.getName())));
+
+        return trackNames;
     }
 }
